@@ -8,7 +8,7 @@ import (
 
 func main() {
 	router := gin.Default()
-	router.Static("/images", "./uploaded/images")
+	// router.Static("/images", "./uploaded/images")
 
 	api.Setup(router)
 	router.Run()
