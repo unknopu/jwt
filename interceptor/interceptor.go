@@ -43,16 +43,8 @@ func JWTVerify(c *gin.Context) {
 		c.Set("jwt_username", claims["username"])
 		c.Next()
 	} else {
-		c.JSON(http.StatusUnauthorized, gin.H{"status": "not ok", "error": err})
+		c.JSON(http.StatusUnauthorized, gin.H{"status": "not ok", "error": err, "message": "invalid token"})
 		c.Abort()
 
 	}
-
-	// token := c.Query("token")
-	// if token == "abcd" {
-	// 	c.Next()
-	// } else {
-	// 	c.JSON(http.StatusUnauthorized, gin.H{"status": "invalid token"})
-	// 	c.Abort()
-	// }
 }
