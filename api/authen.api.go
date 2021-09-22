@@ -2,10 +2,12 @@ package api
 
 import (
 	"jwt/database"
+	"jwt/interceptor"
 	"jwt/model"
 	"net/http"
 	"time"
 
+	// "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -20,7 +22,23 @@ func SetupAuthenAPI(router *gin.Engine) {
 }
 
 func login(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"status": "login"})
+	var user model.User
+	if c.ShouldBind(&user) == nil {
+		var queryUser model.User
+		if err := database.GetDB().First(&queryUser, "username = ?", user.Username).Error; err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"status": "not ok"})
+
+		} else if !checkPasswordHash(user.Password, queryUser.Password) {
+			c.JSON(http.StatusUnauthorized, gin.H{"status": "invalid user"})
+
+		} else {
+			token := interceptor.JWTSign(queryUser)
+			c.JSON(http.StatusOK, gin.H{"status": "login ok", "token": token})
+
+		}
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{"status": "unable to bind data"})
+	}
 }
 
 func register(c *gin.Context) {
