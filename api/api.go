@@ -1,13 +1,16 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"jwt/database"
 
+	"github.com/gin-gonic/gin"
+)
 
-func Setup(router *gin.Engine){
-	// db.SetupDB()
+func Setup(router *gin.Engine) {
+	database.SetUpDB()
 
 	SetupAuthenAPI(router)
-	// SetupProduct(router)
-	// SetupTransactionAPI(router)
-	
+	SetupProduct(router)
+	SetupTransactionAPI(router)
+
 }
